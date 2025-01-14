@@ -1,9 +1,7 @@
 package Common;
 
 import io.cucumber.java.en_old.Ac;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -19,7 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.text.Bidi;
 import java.time.Duration;
 
-import static com.sun.imageio.plugins.jpeg.JPEG.version;
+// import static com.sun.imageio.plugins.jpeg.JPEG.version;
 
 public class AccountCreation
 {
@@ -38,7 +36,7 @@ public class AccountCreation
 
     }*/
 
-    public void initiateWebDriver()
+    public void initiateWebDriver_Chrome()
     {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
@@ -50,6 +48,14 @@ public class AccountCreation
         //driver = new SafariDriver();  // Use SafariDriver(). Be sure to comment away the other drivers.
         //driver = new InternetExplorerDriver();  // Use SafariDriver(). Be sure to comment away the other drivers.
         //driver.manage().window().maximize();
+    }
+
+    public void initiateWebDriver_Firefox()
+    {
+
+        // Create a new object of a WebDriver. Assign it to a variable already created above.
+        driver = new FirefoxDriver();  // Use FirefoxDriver(). Be sure to comment away the other drivers.
+        driver.manage().window().maximize();
     }
 
     public void closeWebDriver()
@@ -174,19 +180,31 @@ public class AccountCreation
 
     public void checkTheTermsAndConditionsBox()
     {
-        // Find the "Terms and Conditions" check box element.
-        WebElement termsConditions = driver.findElement(By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
-                "div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(3)"));
-
-        // User Actions, this will focus on the element (terms & conditions checkbox) by scrolling down to it,
-        // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
-        Actions actions = new Actions(driver);
-        actions.moveToElement(termsConditions);
-        actions.perform();
-
         // Wait for the element to be clickable.
-        elementToBeClickable(driver, By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
-                "div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(3)"));
+        /*elementToBeClickable(driver, By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
+                "div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(3)"));*/
+        elementToBeClickable(driver, By.cssSelector("label[for='sign_up_25'] > .box"));
+        //elementToBeClickable(driver, By.cssSelector(".md-checkbox:nth-child(2) > label > .box"));
+
+
+        // Find the "Terms and Conditions" check box element.
+        WebElement termsConditions = driver.findElement(By.cssSelector(".md-checkbox:nth-child(2) > label > .box"));
+
+        //  User Actions, this will focus on the element (terms & conditions checkbox) by scrolling down to it,
+        // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
+        /*Actions actions = new Actions(driver);
+        actions.moveToElement(termsConditions);
+        actions.perform();*/
+
+        /* TESTING!!! */
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,550)");
+        Actions action = new Actions(driver);
+        action.moveToElement(termsConditions).perform();
+        /*WebElement element = driver.findElement(By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
+                "div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(3)"));*/
+        //element.sendKeys(Keys.DOWN);
+        /* TESTING END!!! */
 
         termsConditions.click();
     }
