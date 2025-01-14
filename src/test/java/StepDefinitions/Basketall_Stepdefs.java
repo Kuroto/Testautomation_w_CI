@@ -22,8 +22,8 @@ public class Basketall_Stepdefs
     public void setUp()
     {
         // Initate the WebDriver.
-        //accountCreation.initiateWebDriver_Chrome();
-        accountCreation.initiateWebDriver_Firefox();
+        accountCreation.initiateWebDriver_Chrome();
+        //accountCreation.initiateWebDriver_Firefox();
     }
 
     @Given("website opens successfully")

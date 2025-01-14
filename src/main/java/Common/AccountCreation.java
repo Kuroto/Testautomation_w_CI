@@ -180,31 +180,23 @@ public class AccountCreation
 
     public void checkTheTermsAndConditionsBox()
     {
-        // Wait for the element to be clickable.
-        /*elementToBeClickable(driver, By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
-                "div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(3)"));*/
-        elementToBeClickable(driver, By.cssSelector("label[for='sign_up_25'] > .box"));
-        //elementToBeClickable(driver, By.cssSelector(".md-checkbox:nth-child(2) > label > .box"));
-
-
         // Find the "Terms and Conditions" check box element.
-        WebElement termsConditions = driver.findElement(By.cssSelector(".md-checkbox:nth-child(2) > label > .box"));
+        WebElement termsConditions = driver.findElement(By.cssSelector("label[for='sign_up_25'] > .box"));
 
         //  User Actions, this will focus on the element (terms & conditions checkbox) by scrolling down to it,
         // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
-        /*Actions actions = new Actions(driver);
+        Actions actions = new Actions(driver);
         actions.moveToElement(termsConditions);
-        actions.perform();*/
+        actions.perform();
 
-        /* TESTING!!! */
+        // Scrolling down the page.
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,550)");
-        Actions action = new Actions(driver);
-        action.moveToElement(termsConditions).perform();
-        /*WebElement element = driver.findElement(By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
-                "div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(3)"));*/
-        //element.sendKeys(Keys.DOWN);
-        /* TESTING END!!! */
+        js.executeScript("window.scrollBy(0,1000)");
+
+        // Wait for the element to be clickable.
+        elementToBeClickable(driver, By.cssSelector("label[for='sign_up_25'] > .box"));
+        //presenceOfElementLocated(driver, By.cssSelector("label[for='sign_up_25'] > .inc"));
+        //visibilityOf(driver, termsConditions);
 
         termsConditions.click();
     }
@@ -212,8 +204,7 @@ public class AccountCreation
     public void checkTheAgeOfConsentBox()
     {
         // Find the "Age of Consent" check box element.
-        WebElement ageOfConsent = driver.findElement(By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
-                "div:nth-child(2) > div:nth-child(2) > label:nth-child(3) > span:nth-child(3)"));
+        WebElement ageOfConsent = driver.findElement(By.cssSelector("label[for='sign_up_26'] > .box"));
 
         // User Actions, this will focus on the element (terms & conditions checkbox) by scrolling down to it,
         // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
@@ -222,8 +213,8 @@ public class AccountCreation
         actions.perform();
 
         // Wait for the element to be clickable.
-        elementToBeClickable(driver, By.cssSelector("div.row:nth-child(12) > div:nth-child(1) >" +
-                "div:nth-child(2) > div:nth-child(2) > label:nth-child(3) > span:nth-child(3)"));
+        elementToBeClickable(driver, By.cssSelector("label[for='sign_up_26'] > .box"));
+        //presenceOfElementLocated(driver, By.cssSelector("label[for='sign_up_26'] > .inc"));
 
         ageOfConsent.click();
     }
@@ -231,7 +222,7 @@ public class AccountCreation
     public void codeOfEthics()
     {
         // Find the "Age of Consent" check box element.
-        WebElement codeOfEthics = driver.findElement(By.cssSelector("div.md-checkbox:nth-child(7) > label:nth-child(3) > span:nth-child(3)"));
+        WebElement codeOfEthics = driver.findElement(By.cssSelector("label[for='fanmembersignup_agreetocodeofethicsandconduct'] > .box"));
 
         // User Actions, this will focus on the element (terms & conditions checkbox) by scrolling down to it,
         // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
@@ -240,7 +231,8 @@ public class AccountCreation
         actions.perform();
 
         // Wait for the element to be clickable.
-        elementToBeClickable(driver, By.cssSelector("div.md-checkbox:nth-child(7) > label:nth-child(3) > span:nth-child(3)"));
+        elementToBeClickable(driver, By.cssSelector("label[for='fanmembersignup_agreetocodeofethicsandconduct'] > .box"));
+        //presenceOfElementLocated(driver, By.cssSelector("label[for='fanmembersignup_agreetocodeofethicsandconduct'] > .inc"));
 
         codeOfEthics.click();
     }
@@ -342,22 +334,29 @@ public class AccountCreation
     ********                                        WAIT FUNCTIONS                                        ********
     **************************************************************************************************************
     */
+
+    public void waitFor(WebDriverWait waiting)
+    {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+    }
+
     public void presenceOfElementLocated(WebDriver driver, By by)
     {
-        (new WebDriverWait(driver, Duration.ofSeconds(10))).
+        (new WebDriverWait(driver, Duration.ofSeconds(5))).
                 until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
     public void elementToBeClickable(WebDriver driver, By by)
     {
-        (new WebDriverWait(driver, Duration.ofSeconds(10))).
+        (new WebDriverWait(driver, Duration.ofSeconds(5))).
                 until(ExpectedConditions.elementToBeClickable(by));
     }
 
-    public void elementSelectionStateToBe(By by, boolean selected)
+    public void visibilityOf(WebDriver driver, WebElement element)
     {
-        (new WebDriverWait(driver, Duration.ofSeconds(10))).
-                until(ExpectedConditions.elementSelectionStateToBe(by, selected));
+        (new WebDriverWait(driver, Duration.ofSeconds(5))).
+                until(ExpectedConditions.visibilityOf(element));
     }
 
     /*
