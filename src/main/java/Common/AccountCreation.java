@@ -7,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.json.JsonOutput;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -15,6 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.text.Bidi;
 import java.time.Duration;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class AccountCreation
@@ -29,19 +31,17 @@ public class AccountCreation
     public WebDriver driver;
     private WebDriverWait wait;
 
+    // Create a new object from SimpleDateFormat with a custom format, so that we can add it later to the email.
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
     String formatDateTime = simpleDateFormat.format(new Date());
 
-    // Create the Constructor. This will be used to call all the other functions. Currently not needed.
-    /*public AccountCreation ()
-    {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-    }*/
-
     public void initiateWebDriver_Chrome()
     {
+        // Create some options for Chrome to start with.
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
+        options.addArguments("--incognito");
+        options.addArguments("--disable-popup-blocking");
 
         // Create a new object of a WebDriver. Assign it to a variable already created above.
         driver = new ChromeDriver(options);  // Use ChromeDriver(). Be sure to comment away the other drivers.
@@ -49,7 +49,6 @@ public class AccountCreation
 
     public void initiateWebDriver_Firefox()
     {
-
         // Create a new object of a WebDriver. Assign it to a variable already created above.
         driver = new FirefoxDriver();
         driver.manage().window().maximize();
@@ -57,7 +56,6 @@ public class AccountCreation
 
     public void initiateWebDriver_Edge()
     {
-
         // Create a new object of a WebDriver. Assign it to a variable already created above.
         driver = new EdgeDriver();
         driver.manage().window().maximize();
@@ -73,10 +71,7 @@ public class AccountCreation
     {
         // Start by opening the website.
         driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-        //presenceOfElementLocated(driver, By.id("titleText1"));  // Verify the website opened by locating the title.
-
-        /*waitPlease(test);
-        WebElement test = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("titleText1")));*/
+        presenceOfElementLocated(driver, By.id("titleText1"));  // Verify the website opened by locating the title.
     }
 
     public void dateOfBirthElementPresent()
@@ -137,14 +132,14 @@ public class AccountCreation
 
     public String enterTheEmail(String email)
     {
-        // Get the "Email Address" element and send in the email via the function argument.
+        // Get the "Email Address" element.
         WebElement emailElement = driver.findElement(By.id("member_emailaddress"));
 
         // Run the function to add current date and time to the email.
         String newEmail = addEmailDate(email);
         emailElement.sendKeys(newEmail);
 
-        /* THIS WAS AN EARLIER EMAIL INCREMENT, WITH NUMBER. IT WORKS BUT NOT SO EFFICIENT.
+        /* THIS WAS AN EARLIER EMAIL INCREMENT VERSION, WITH NUMBERS. IT WORKS BUT STILL MANUAL WORK NECESSARY EACH RUN.
         // Run the function of incrementing the email with a number.
         String newEmail = emailIncrement(email);
         emailElement.sendKeys(newEmail);
@@ -163,7 +158,7 @@ public class AccountCreation
         String newConfirmEmail = addEmailDate(confirmEmail);
         confirmEmailElement.sendKeys(newConfirmEmail);
 
-        /* THIS WAS AN EARLIER EMAIL INCREMENT, WITH NUMBER. IT WORKS BUT NOT SO EFFICIENT.
+        /* THIS WAS AN EARLIER EMAIL INCREMENT VERSION, WITH NUMBERS. IT WORKS BUT STILL MANUAL WORK NECESSARY EACH RUN.
         // Run the function of incrementing the email with a number.
         String newConfirmEmail = emailIncrement(confirmEmail);
         confirmEmailElement.sendKeys(newConfirmEmail);
@@ -175,7 +170,7 @@ public class AccountCreation
 
     public String enterPassword(String password)
     {
-        // Get the "Password" element and send in the password via the function argument.
+        // Get the "Password" element.
         WebElement enterPasswordElement = driver.findElement(By.id("signupunlicenced_password"));
         enterPasswordElement.sendKeys(password);
 
@@ -185,7 +180,7 @@ public class AccountCreation
 
     public String confirmPassword(String confirmPassword)
     {
-        // Get the "Retype your password" element and send in the password via the function argument.
+        // Get the "Retype your password" element.
         WebElement confirmPasswordElement = driver.findElement(By.id("signupunlicenced_confirmpassword"));
         confirmPasswordElement.sendKeys(confirmPassword);
 
@@ -211,12 +206,12 @@ public class AccountCreation
         elementToBeClickable(driver, By.cssSelector("label[for='sign_up_25'] > .box"));
         termsConditions.click();
 
-        // Initialize the WebDriverWait. Then wait for an element to be visible. I did it this way so that I can reuse
-        // it and use other wait.until() conditions.
+        /* Initialize the WebDriverWait. Then wait for an element to be visible. I did it this way so that I can reuse
+           it and use other wait.until() conditions if necessary. */
         invokeWait();
         WebElement termsChecked = wait.until(ExpectedConditions.visibilityOfElementLocated
-                (By.cssSelector("div.row:nth-child(12) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > label:nth-child(3) > span:nth-child(1)")));
-
+                (By.cssSelector("div.row:nth-child(12) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > " +
+                        "label:nth-child(3) > span:nth-child(1)")));
     }
 
     public void checkTheAgeOfConsentBox()
@@ -224,21 +219,20 @@ public class AccountCreation
         // Find the "Age of Consent" check box element.
         WebElement ageOfConsent = driver.findElement(By.cssSelector("label[for='sign_up_26'] > .box"));
 
-        // User Actions, this will focus on the element (Age of Consent) by scrolling down to it,
-        // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
-        Actions actions = new Actions(driver);
-        actions.moveToElement(ageOfConsent);
-        actions.perform();
+        // Scroll down the page so that the checkboxes will be visible.
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,1000)");
 
         // Wait for the element to be clickable.
         elementToBeClickable(driver, By.cssSelector("label[for='sign_up_26'] > .box"));
         ageOfConsent.click();
 
-        // Initialize the WebDriverWait. Then wait for an element to be visible. I did it this way so that I can reuse
-        // it and use other wait.until() conditions.
+        /* Initialize the WebDriverWait. Then wait for an element to be visible. I did it this way so that I can reuse
+           it and use other wait.until() conditions if necessary. */
         invokeWait();
         WebElement ageChecked = wait.until(ExpectedConditions.visibilityOfElementLocated
-                (By.cssSelector("div.row:nth-child(12) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > label:nth-child(3) > span:nth-child(1)")));
+                (By.cssSelector("div.row:nth-child(12) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > " +
+                        "label:nth-child(3) > span:nth-child(1)")));
     }
 
     public void codeOfEthics()
@@ -246,18 +240,16 @@ public class AccountCreation
         // Find the "Code of Ethics" check box element.
         WebElement codeOfEthics = driver.findElement(By.cssSelector("label[for='fanmembersignup_agreetocodeofethicsandconduct'] > .box"));
 
-        // User Actions, this will focus on the element (Code of Ethics) by scrolling down to it,
-        // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
-        Actions actions = new Actions(driver);
-        actions.moveToElement(codeOfEthics);
-        actions.perform();
+        // Scroll down the page so that the checkboxes will be visible.
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,1000)");
 
         // Wait for the element to be clickable.
         elementToBeClickable(driver, By.cssSelector("label[for='fanmembersignup_agreetocodeofethicsandconduct'] > .box"));
         codeOfEthics.click();
 
-        // Initialize the WebDriverWait. Then wait for an element to be visible. I did it this way so that I can reuse
-        // it and use other wait.until() conditions.
+        /* Initialize the WebDriverWait. Then wait for an element to be visible. I did it this way so that I can reuse
+           it and use other wait.until() conditions if necessary. */
         invokeWait();
         WebElement ethicsChecked = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector
                 ("div.md-checkbox:nth-child(7) > label:nth-child(3) > span:nth-child(1)")));
@@ -268,18 +260,32 @@ public class AccountCreation
         // Find the submit button "Confirm and join".
         WebElement submitForm = driver.findElement(By.cssSelector("input[name='join']"));
 
-        // User Actions, this will focus on the element (terms & conditions checkbox) by scrolling down to it,
-        // making sure it is in the view of the end-user and the script. This will make it possible to click on it.
-        Actions actions = new Actions(driver);
-        actions.moveToElement(submitForm);
-        actions.perform();
+        // Scroll down the page so that the checkboxes will be visible.
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,1000)");
 
         submitForm.submit();
     }
 
+    public String accountSuccessful()
+    {
+        String successful;
+
+        // Wait for the membership number text on the account created page to be visible.
+        invokeWait();
+        WebElement membershipNumberTest = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath
+                ("/html/body/div/div[2]/div/div/h5")));
+
+        // Find membership number header text
+        WebElement memberAcceptedText = driver.findElement(By.xpath("/html/body/div/div[2]/div/div/h5"));
+        successful = memberAcceptedText.getText();
+
+        return successful;
+    }
+
     public boolean lastNameMissing()
     {
-        // Set false on variable for last name missing.
+        // Set false on variable for last name missing. This will be used as a check for the assert.
         boolean isLastNameMissing = false;
 
         // Find the error field from last name after we've tried to submit the form.
@@ -299,7 +305,7 @@ public class AccountCreation
 
     public boolean passwordMismatch()
     {
-        // Set false on variable for equal password invalid.
+        // Set false on variable for equal password to be invalid. This will be used as a check for the assert.
         boolean doesPasswordMatch = false;
 
         // Find the error field from password verification after we've tried to submit the form.
@@ -319,7 +325,7 @@ public class AccountCreation
 
     public boolean termsNotChecked()
     {
-        // Set false on variable if the terms and conditions box have been checked.
+        // Set false on variable if the terms and conditions box have been checked. This will be used as a check for the assert.
         boolean termsChecked = false;
 
         // Find the error field from terms verification after we've tried to submit the form.
@@ -335,18 +341,6 @@ public class AccountCreation
         {
             return termsChecked;
         }
-    }
-
-    public String accountSuccessful()
-    {
-        String successful;
-
-        // Find membership number header text
-        WebElement memberAcceptedText = driver.findElement(By.cssSelector("h5.bold"));
-        successful = memberAcceptedText.getText();
-
-        return successful;
-
     }
 
     /*
@@ -373,10 +367,10 @@ public class AccountCreation
     }
 
     /*
-     **************************************************************************************************************
-     ********                                       GENERAL FUNCTIONS                                      ********
-     **************************************************************************************************************
-     */
+    **************************************************************************************************************
+    ********                                  INCREMENT EMAIL FUNCTIONS                                   ********
+    **************************************************************************************************************
+    */
 
     public String addEmailDate(String email)
     {
@@ -391,6 +385,7 @@ public class AccountCreation
         return emailPrefix + emailSuffix;
     }
 
+    // NOT USED BUT CAN BE USED FOR FUNZIES
     public static String emailIncrement(String email)
     {
         String[] divideEmail = email.split("@");  // Divide the email into 2 parts, before the @ symbol and after the @ symbol.

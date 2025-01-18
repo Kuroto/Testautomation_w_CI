@@ -1,7 +1,8 @@
 Feature: Account creation
 
-  Background: Open the website first
-    Given website opens successfully
+  Background: Open the website first, only "Firefox", "Chrome" or "Edge" are supported.
+    Given that my web browser is "Firefox"
+    And website opens successfully
 
   Scenario Outline: Creating several accounts using scenario outline
     Given the date of birth element present
@@ -51,7 +52,7 @@ Feature: Account creation
     And check the Age of Consent box
     And check the Code of Ethics box
     When I submit the form
-    Then I will receive an error message that the emails do not match
+    Then I will receive an error message that the passwords do not match
 
   Scenario: Terms and Conditions box is not checked
     Given the date of birth element present

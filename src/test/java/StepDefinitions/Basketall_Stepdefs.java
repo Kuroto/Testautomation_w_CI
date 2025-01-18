@@ -18,16 +18,25 @@ public class Basketall_Stepdefs
     // All the code will be on the constructor class side.
     AccountCreation accountCreation = new AccountCreation();
 
-    @Before
-    public void setUp()
+    @Given("that my web browser is {string}")
+    public void setUp(String webBrowser)
     {
-        // Initate the WebDriver.
-        accountCreation.initiateWebDriver_Chrome();
-        //accountCreation.initiateWebDriver_Firefox();
-        //accountCreation.initiateWebDriver_Edge();
+        // This will open the web browser based on user input from the Feature file.
+        if (webBrowser.equals("Firefox") || webBrowser.equals("firefox"))
+        {
+            accountCreation.initiateWebDriver_Firefox();
+        }
+        else if (webBrowser.equals("Chrome") || webBrowser.equals("chrome"))
+        {
+            accountCreation.initiateWebDriver_Chrome();
+        }
+        else if (webBrowser.equals("Edge") || webBrowser.equals("edge"))
+        {
+            accountCreation.initiateWebDriver_Edge();
+        }
     }
 
-    @Given("website opens successfully")
+    @And("website opens successfully")
     public void testOpenWebsite()
     {
         accountCreation.openWebsite();
@@ -143,8 +152,8 @@ public class Basketall_Stepdefs
         System.out.println("Error! Last name is missing!");
     }
 
-    @Then("I will receive an error message that the emails do not match")
-    public void testEmailsDoNotMatch()
+    @Then("I will receive an error message that the passwords do not match")
+    public void testPasswordsDoNotMatch()
     {
         boolean expected = true;
         boolean actual = accountCreation.passwordMismatch();
@@ -166,7 +175,8 @@ public class Basketall_Stepdefs
     @After
     public void testCloseBrowser()
     {
-        //accountCreation.closeWebDriver();
-        //System.out.println("Closed the website.");
+        // Close the website and WebDriver.
+        accountCreation.closeWebDriver();
+        System.out.println("Closed the website.");
     }
 }
