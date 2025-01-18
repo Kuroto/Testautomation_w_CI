@@ -19,17 +19,17 @@ Feature: Account creation
     Then I will be redirected to a confirmation page
 
     Examples:
-      | First Name | Last Name | Email                         | Confirm Email                 | Password     | Repeat Password |
-      | Phil       | Stevenson | phil.stevenson_test1@test.com | phil.stevenson_test1@test.com | password123! | password123!    |
-      | Margret    | Thatcher  | mt_test1@test.com             | mt_test1@test.com             | ste!5$@fF    | ste!5$@fF       |
-      | Cucumber   | Selenium  | cu_se_test1@test.com          | cu_se_test1@test.com          | APassword1!  | APassword1!     |
+      | First Name | Last Name | Email                        | Confirm Email                | Password     | Repeat Password |
+      | Phil       | Stevenson | phil.stevenson_test@test.com | phil.stevenson_test@test.com | password123! | password123!    |
+      | Margret    | Thatcher  | mt_test@test.com             | mt_test@test.com             | ste!5$@fF    | ste!5$@fF       |
+      | Cucumber   | Selenium  | cu_se_test@test.com          | cu_se_test@test.com          | APassword1!  | APassword1!     |
 
   Scenario: Last name is missing when trying to create an account
     Given the date of birth element present
     And I input the date of birth via the dropdown
     And enter the first name "TestFirstName"
-    And enter the email "email17@email.com"
-    And confirm the email "email17@email.com"
+    And enter the email "email@email.com"
+    And confirm the email "email@email.com"
     And enter password "password!"
     And confirm password "password!"
     And check the Terms and Conditions box
@@ -43,8 +43,8 @@ Feature: Account creation
     And I input the date of birth via the dropdown
     And enter the first name "TestFirstName"
     And enter the last name "TestLastName"
-    And enter the email "email17@email.com"
-    And confirm the email "email17@email.com"
+    And enter the email "email@email.com"
+    And confirm the email "email@email.com"
     And enter password "password!"
     And confirm password "password"
     And check the Terms and Conditions box
